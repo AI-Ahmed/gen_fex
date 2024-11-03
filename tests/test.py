@@ -1,7 +1,7 @@
 import chex
 import pytest
 from .gen_data import create_sparse_equity_return_data, create_multivariate_equities_returns
-from src import PPCA, PKPCA
+from stochastic_fex import PPCA, PKPCA
 
 SEED = 42
 ST_SHAPE = (10000, 10)

@@ -33,6 +33,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest>=7.4.0,<8.0.0",
+    "flit>=3.7,<4.0"
 ]
 
 [project.urls]
@@ -40,8 +41,7 @@ homepage = "https://github.com/AI-Ahmed/stochastic_fex"
 repository = "https://github.com/AI-Ahmed/stochastic_fex"
 
 [tool.flit.module]
-name = "stochastic_fex"
-directory = "src"
+directory = "stochastic_fex"
 
 [tool.flit.sdist]
 include = ["tests/"]
