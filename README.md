@@ -31,7 +31,7 @@ The implementation is fully **compatible with scikit-learn**, making it easy to 
 ├── LICENSE
 ├── README.md
 ├── pyproject.toml
-├── src
+├── stochastic_fex
 │   ├── __init__.py
 │   ├── _ppcax.py
 │   ├── _pkpcax.py
@@ -53,7 +53,7 @@ The implementation is fully **compatible with scikit-learn**, making it easy to 
 
    ```shell
    git clone https://github.com/AI-Ahmed/stochastic_fex.git
-   cd src
+   cd stochastic_fex
    ```
 
 2. **Install Flit**
@@ -101,7 +101,7 @@ To run the unit tests and ensure everything is working correctly:
    If you haven't already, navigate to the project's root directory:
 
    ```shell
-   cd src
+   cd stochastic_fex
    ```
 
 2. **Run Tests Using pytest**
@@ -166,7 +166,7 @@ If you're planning to contribute to the project or modify the code, follow these
 
    ```shell
    git clone https://github.com/AI-Ahmed/stochastic_fex.git
-   cd src
+   cd stochastic_fex
    ```
 
 2. **Create a Virtual Environment**
