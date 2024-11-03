@@ -1,18 +1,28 @@
-# PPCAx – Probabilistic PCA with JAX
+# Stochastic Feature Extraction in JAX
 
 ## Overview
 
-Probabilistic Principal Component Analysis (PPCA) model using DeepMind's JAX library. The model is a robust feature extraction and dimensionality reduction technique for high-dimensional, sparse multivariate data.
+This repository accompanies our manuscript titled **"Generative Modeling for High-Dimensional Sparse Data: Stochastic Feature Extraction and Latent Variable Exploration in High-Risk Financial Regimes"**. The research focuses on leveraging probabilistic generative models—specifically Probabilistic PCA (PPCA) and Probabilistic Kernel PCA (PKPCA)—to reconstruct missing financial data and explore hidden, informative patterns. Our models offer robust handling of high-dimensional, sparse financial datasets and outperform conventional methods, especially in high-volatility regimes.
 
-PPCA is a probabilistic approach to Principal Component Analysis (PCA), which allows for imputing missing values and estimating latent features in the data. By leveraging the power of JAX, this implementation ensures efficient and scalable computation, making it suitable for large-scale financial datasets.
-
-The methodology used in this project was initially proposed in our research manuscript titled *"Probabilistic PCA in High Dimensions: Stochastic Dimensionality Reduction on Sparse Multivariate Assets' Bars at High-Risk Regimes"*. This work presents a novel approach for analyzing portfolio behavior during periods of high market turbulence and risk by:
+The research demonstrates the superiority of PKPCA over PPCA in capturing non-linear, time-dependent features, particularly during volatile financial regimes.
 
 1. Using information-driven bar techniques to synchronize and sample imbalanced sequence volumes.
 2. Applying a sampling event-based technique, the CUMSUM Filtering method, to create strategic trading plans based on volatility.
-3. Employing an improved version of the Gaussian Linear System called PPCA for feature extraction from the latent space.
 
-Our findings suggest that PPCA is highly effective in estimating sparse data and forecasting the effects of individual assets within a portfolio under varying market conditions. This repository contains the core implementation of the PPCA model, demonstrating its capability to establish significant relationships among correlated assets during high-risk regimes.
+This repository implements probabilistic dimensionality reduction models, specifically **Probabilistic PCA (PPCA)** and **Probabilistic Kernel PCA (PKPCA)**, to address two key challenges:
+
+- Reconstructing missing values in high-dimensional time-series data.
+- Extracting latent features in a sparse, information-driven bars dataset, which is a specialized form of financial sampling.
+
+The implementation is fully **compatible with scikit-learn**, making it easy to integrate into existing machine learning workflows.
+
+## Key Contributions
+
+- Implementation of **PPCA** and **PKPCA** models for dimensionality reduction and missing data imputation.
+- Application of **information-driven bars** and **CUMSUM filtering** to expand asset vectors to a high-dimensional sparse multivariate setting.
+- Comparison of model performance using **MSE**, **MAE**, and other metrics across different market regimes.
+- Experimental validation using **risk metrics** such as **Conditional Value at Risk (CVaR)** and **Conditional Drawdown at Risk (CDaR)**.
+- Seamless integration with the **scikit-learn** API for easy use in machine learning pipelines.
 
 ## 📁 Directory Structure
 
@@ -20,37 +30,15 @@ Our findings suggest that PPCA is highly effective in estimating sparse data and
 .
 ├── LICENSE
 ├── README.md
-├── config
-├── data
-│   ├── bars
-│   ├── metadata
-│   ├── sample
-│   │   ├── r1
-│   │   └── r2
-│   └── tickers
-├── models
-├── notebooks
 ├── pyproject.toml
-├── reports
-│   ├── docs
-│   ├── eval
-│   ├── figures
-│   └── train
 ├── src
 │   ├── __init__.py
-│   ├── eval
-│   ├── ft_eng
-│   ├── ppcax
-│   │   ├── __init__.py
-│   │   └── _ppcax.py
-│   ├── preprocessing
-│   └── utils
+│   ├── _ppcax.py
+│   ├── _pkpcax.py
 └── tests
     ├── __init__.py
     ├── gen_data.py
-    └── test_ppcax.py
-
-25 directories, 17 files
+    └── test.py
 ```
 
 ## 🛠️ Installation and Setup Instructions
@@ -64,8 +52,8 @@ Our findings suggest that PPCA is highly effective in estimating sparse data and
 1. **Clone the Repository**
 
    ```shell
-   git clone https://github.com/AI-Ahmed/ppcax.git
-   cd ppcax
+   git clone https://github.com/AI-Ahmed/stochastic_fex.git
+   cd src
    ```
 
 2. **Install Flit**
@@ -84,24 +72,24 @@ Our findings suggest that PPCA is highly effective in estimating sparse data and
    flit install --deps develop
    ```
 
-   This command installs the `ppcax` package along with all required dependencies, including development and testing tools like `pytest` and `flake8`.
+   This command installs the `stochastic_fex` package along with all required dependencies, including development and testing tools like `pytest` and `flake8`.
 
 ### Alternative: Install Directly from GitHub
 
 If you prefer to install the package directly from GitHub without cloning the repository:
 
 ```shell
-pip install git+https://github.com/AI-Ahmed/ppcax
+pip install git+https://github.com/AI-Ahmed/stochastic_fex
 ```
 
-This command installs the latest version of `ppcax` from the main branch.
+This command installs the latest version of `stochastic_fex` from the main branch.
 
 ### Importing the Package
 
 After installation, you can import the PPCA model in your Python code:
 
 ```python
-from ppcax import PPCA
+from stochastic_fex import PPCA, PKPCA
 ```
 
 ## 🧪 Running Tests
@@ -113,7 +101,7 @@ To run the unit tests and ensure everything is working correctly:
    If you haven't already, navigate to the project's root directory:
 
    ```shell
-   cd ppcax
+   cd src
    ```
 
 2. **Run Tests Using pytest**
@@ -124,25 +112,30 @@ To run the unit tests and ensure everything is working correctly:
 
 ## 📚 Usage Example
 
-Here's a simple example of how to use the `PPCA` class:
+Here's a simple example of how to use the `PPCA` and `PKPCA` classs:
 
 ```python
 import numpy as np
-from ppcax import PPCA
+from stochastic_fex import PPCA, PKPCA
 
 # Generate some sample data
 data = np.random.rand(100, 1000)
 
-# Create a PPCA model instance
+# Create a PPCA, PKPCA models instances
 ppca_model = PPCA(q=150)
+pkpca_model = PKPCA(q=150)
 
 # Fit the model to the data
 ppca_model.fit(data, use_em=True)
+pkpca_model.fit(data, use_em=True)
 
 # Transform the data to the lower-dimensional space
-transformed_data = ppca_model.transform(lower_dim_only=True)
+transformed_data_ppca = ppca_model.transform()
+transformed_data_pkpca = pkpca_model.transform()
 
-print("Transformed Data Shape:", transformed_data.shape)
+print("PPCA Transformed Data Shape:", transformed_data_ppca.shape)
+print("PKPCA Transformed Data Shape:", transformed_data_pkpca.shape)
+
 ```
 
 ## 📄 License
@@ -155,11 +148,11 @@ If you find this work useful in your research, please consider citing:
 
 ```bibtex
 @article{Atwa2024,
-  author    = {Ahmed Atwa and Ahmed Sedky and Mohamed Kholief},
-  title     = {Probabilistic PCA in High Dimensions: Stochastic Dimensionality Reduction on Sparse Multivariate Assets' Bars at High-Risk Regimes},
-  journal   = {SSRN Electronic Journal},
-  year      = {2024},
-  note      = {Available at SSRN: \url{https://ssrn.com/abstract=4874874} or \url{http://dx.doi.org/10.2139/ssrn.4874874}}
+  author    = {Atwa, Ahmed and Sedky, Ahmed},
+  title     = {Generative Modeling for High-Dimensional Sparse Data: Stochastic Feature Extraction and Latent Variable Exploration in High-Risk Financial Regimes},
+  journal   = {},
+  year      = {},
+  note      = {}
 }
 ```
 
@@ -172,8 +165,8 @@ If you're planning to contribute to the project or modify the code, follow these
 1. **Clone the Repository**
 
    ```shell
-   git clone https://github.com/AI-Ahmed/ppcax.git
-   cd ppcax
+   git clone https://github.com/AI-Ahmed/stochastic_fex.git
+   cd src
    ```
 
 2. **Create a Virtual Environment**
@@ -258,6 +251,6 @@ To publish a new version of the package to PyPI:
 
 ## 🌐 Links
 
-- **Documentation**: [Github Package documentation](https://github.com/AI-Ahmed/ppcax/README.md)
-- **Issue Tracker**: [GitHub Issues](https://github.com/AI-Ahmed/ppcax/issues)
-- **Source Code**: [GitHub Repository](https://github.com/AI-Ahmed/ppcax)
+- **Documentation**: [Github Package documentation](https://github.com/AI-Ahmed/stochastic_fex/README.md)
+- **Issue Tracker**: [GitHub Issues](https://github.com/AI-Ahmed/stochastic_fex/issues)
+- **Source Code**: [GitHub Repository](https://github.com/AI-Ahmed/stochastic_fex)
