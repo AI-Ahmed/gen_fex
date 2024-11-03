@@ -40,6 +40,7 @@ homepage = "https://github.com/AI-Ahmed/stochastic_fex"
 repository = "https://github.com/AI-Ahmed/stochastic_fex"
 
 [tool.flit.module]
+name = "stochastic_fex"
 directory = "src"
 
 [tool.flit.sdist]
