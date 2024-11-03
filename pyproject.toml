@@ -3,9 +3,9 @@ requires = ["flit_core >=3.7,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "ppcax"
-version = "0.1.1"
-description = "Stochastic dimensionality reduction for finance data using PPCA in JAX framework"
+name = "stochastic_fex"
+version = "0.1.2"
+description = "Stochastic feature extraction for financial data in JAX framework"
 requires-python = ">=3.10"
 readme = "README.md"
 authors = [
@@ -36,11 +36,10 @@ test = [
 ]
 
 [project.urls]
-homepage = "https://github.com/AI-Ahmed/ppcax"
-repository = "https://github.com/AI-Ahmed/ppcax"
+homepage = "https://github.com/AI-Ahmed/stochastic_fex"
+repository = "https://github.com/AI-Ahmed/stochastic_fex"
 
 [tool.flit.module]
-name = "ppcax"
 directory = "src"
 
 [tool.flit.sdist]
