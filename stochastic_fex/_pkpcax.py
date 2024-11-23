@@ -95,9 +95,18 @@ class PKPCA(PPCA):
         n, d = K_fn.shape
         _, subkey = jax.random.split(seed)
 
-        samples = jax.random.multivariate_normal(subkey, jnp.zeros(n), jnp.cov(K_fn), (df,))
+        k_fn = K_fn + 1e-6 * jnp.eye(n) # Add small noise to ensure numerical stability (in case of near-singularity)
 
-        # Construct the kernel matrix
+        # Perform SVD for stable sampling
+        U, singular_vals, Vt = jnp.linalg.svd(k_fn)
+        sqrt_singular_vals = jnp.sqrt(jnp.clip(singular_vals, 0, None))
+        Sigma = U @ jnp.diag(sqrt_singular_vals)
+
+        # Use Sigma for multivariate normal sampling
+        dist = distrax.MultivariateNormalTri(loc=jnp.zeros(n), scale_tri=Sigma)
+        samples = dist.sample(seed=subkey, sample_shape=(df,))
+
+        # Construct the covariance matrix
         K = samples.T @ samples
 
         H = (jnp.eye(n) - jnp.ones((n, n)) / n) / n ** 0.5 # Centering matrix H
