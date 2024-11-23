@@ -95,10 +95,7 @@ class PKPCA(PPCA):
         n, d = K_fn.shape
         _, subkey = jax.random.split(seed)
 
-        # Use distrax's MultivariateNormalTri for sampling from multivariate normal
-        # k_fn = K_fn + 1e-6 * jnp.eye(n) # add small fractional noise to prevent singularity while computing the fraction.
-        # LL = jnp.linalg.cholesky(k_fn)
-        dist = distrax.MultivariateNormalTri(loc=jnp.zeros(n), scale_tri=jnp.cov(K_fn))
+        samples = jax.random.multivariate_normal(subkey, jnp.zeros(n), jnp.cov(K_fn), (df,))
 
         # Sample from the distribution 'df' times
         samples = dist.sample(seed=subkey, sample_shape=(df,))
