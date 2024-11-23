@@ -97,9 +97,6 @@ class PKPCA(PPCA):
 
         samples = jax.random.multivariate_normal(subkey, jnp.zeros(n), jnp.cov(K_fn), (df,))
 
-        # Sample from the distribution 'df' times
-        samples = dist.sample(seed=subkey, sample_shape=(df,))
-
         # Construct the kernel matrix
         K = samples.T @ samples
 
