@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository accompanies our manuscript titled **"Generative Modeling for High-Dimensional Sparse Data: Stochastic Feature Extraction and Latent Variable Exploration in High-Risk Financial Regimes"**. The research focuses on leveraging probabilistic generative models—specifically Probabilistic PCA (PPCA) and Probabilistic Kernel PCA (PKPCA)—to reconstruct missing financial data and explore hidden, informative patterns. Our models offer robust handling of high-dimensional, sparse financial datasets and outperform conventional methods, especially in high-volatility regimes.
+This repository accompanies our manuscript titled **"Generative Modeling for High-Dimensional Sparse Data: Stochastic Feature Extraction in High-Risk Financial Regimes"**. The research focuses on leveraging probabilistic generative models—specifically Probabilistic PCA (PPCA) and Probabilistic Kernel PCA (PKPCA)—to reconstruct missing financial data and explore hidden, informative patterns. Our models offer robust handling of high-dimensional, sparse financial datasets and outperform conventional methods, especially in high-volatility regimes.
 
 The research demonstrates the superiority of PKPCA over PPCA in capturing non-linear, time-dependent features, particularly during volatile financial regimes.
 
@@ -149,7 +149,7 @@ If you find this work useful in your research, please consider citing:
 ```bibtex
 @article{Atwa2024,
   author    = {Atwa, Ahmed and Sedky, Ahmed},
-  title     = {Generative Modeling for High-Dimensional Sparse Data: Stochastic Feature Extraction and Latent Variable Exploration in High-Risk Financial Regimes},
+  title     = {Generative Modeling for High-Dimensional Sparse Data: Stochastic Feature Extraction in High-Risk Financial Regimes},
   journal   = {},
   year      = {},
   note      = {}
