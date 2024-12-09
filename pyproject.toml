@@ -3,9 +3,9 @@ requires = ["flit_core >=3.7,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "stochastic_fex"
+name = "gen_fex"
 version = "0.1.2"
-description = "Stochastic feature extraction for financial data in JAX framework"
+description = "Probabilistic feature extraction for financial data in JAX framework"
 requires-python = ">=3.10"
 readme = "README.md"
 license = { text = "LICENSE" }  # This line ensures the license is recognized
@@ -38,12 +38,12 @@ test = [
 ]
 
 [project.urls]
-homepage = "https://github.com/AI-Ahmed/stochastic_fex"
-repository = "https://github.com/AI-Ahmed/stochastic_fex"
+homepage = "https://github.com/AI-Ahmed/gen_fex"
+repository = "https://github.com/AI-Ahmed/gen_fex"
 
 [tool.flit.module]
-name = "stochastic_fex"  # Name of the package
-directory = "stochastic_fex"  # New directory name containing __init__.py
+name = "gen_fex"  # Name of the package
+directory = "gen_fex"  # New directory name containing __init__.py
 
 [tool.flit.sdist]
 include = ["tests/"]
