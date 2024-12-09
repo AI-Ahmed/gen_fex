@@ -1,8 +1,8 @@
-# Stochastic Feature Extraction in JAX
+# Probabilistic Feature Extraction in JAX
 
 ## Overview
 
-This repository accompanies our manuscript titled **"Generative Modeling for High-Dimensional Sparse Data: Stochastic Feature Extraction in High-Risk Financial Regimes"**. The research focuses on leveraging probabilistic generative models—specifically Probabilistic PCA (PPCA) and Probabilistic Kernel PCA (PKPCA)—to reconstruct missing financial data and explore hidden, informative patterns. Our models offer robust handling of high-dimensional, sparse financial datasets and outperform conventional methods, especially in high-volatility regimes.
+This repository accompanies our manuscript titled **"Generative Modeling for High-Dimensional Sparse Data: Probabilistic Feature Extraction in High-Risk Financial Regimes"**. The research focuses on leveraging probabilistic generative models—specifically Probabilistic PCA (PPCA) and Probabilistic Kernel PCA (PKPCA)—to reconstruct missing financial data and explore hidden, informative patterns. Our models offer robust handling of high-dimensional, sparse financial datasets and outperform conventional methods, especially in high-volatility regimes.
 
 The research demonstrates the superiority of PKPCA over PPCA in capturing non-linear, time-dependent features, particularly during volatile financial regimes.
 
@@ -14,7 +14,7 @@ This repository implements probabilistic dimensionality reduction models, specif
 - Reconstructing missing values in high-dimensional time-series data.
 - Extracting latent features in a sparse, information-driven bars dataset, which is a specialized form of financial sampling.
 
-The implementation is fully **compatible with scikit-learn**, making it easy to integrate into existing machine learning workflows.
+The implementation is fully **compatible with scikit-learn**, making it easy to integrate into existing machine-learning workflows.
 
 ## Key Contributions
 
@@ -31,7 +31,7 @@ The implementation is fully **compatible with scikit-learn**, making it easy to 
 ├── LICENSE
 ├── README.md
 ├── pyproject.toml
-├── stochastic_fex
+├── gen_fex
 │   ├── __init__.py
 │   ├── _ppcax.py
 │   ├── _pkpcax.py
@@ -52,8 +52,8 @@ The implementation is fully **compatible with scikit-learn**, making it easy to 
 1. **Clone the Repository**
 
    ```shell
-   git clone https://github.com/AI-Ahmed/stochastic_fex.git
-   cd stochastic_fex
+   git clone https://github.com/AI-Ahmed/gen_fex.git
+   cd gen_fex
    ```
 
 2. **Install Flit**
@@ -72,24 +72,24 @@ The implementation is fully **compatible with scikit-learn**, making it easy to 
    flit install --deps develop
    ```
 
-   This command installs the `stochastic_fex` package along with all required dependencies, including development and testing tools like `pytest` and `flake8`.
+   This command installs the `gen_fex` package along with all required dependencies, including development and testing tools like `pytest` and `flake8`.
 
 ### Alternative: Install Directly from GitHub
 
 If you prefer to install the package directly from GitHub without cloning the repository:
 
 ```shell
-pip install git+https://github.com/AI-Ahmed/stochastic_fex
+pip install git+https://github.com/AI-Ahmed/gen_fex
 ```
 
-This command installs the latest version of `stochastic_fex` from the main branch.
+This command installs the latest version of `gen_fex` from the main branch.
 
 ### Importing the Package
 
 After installation, you can import the PPCA model in your Python code:
 
 ```python
-from stochastic_fex import PPCA, PKPCA
+from gen_fex import PPCA, PKPCA
 ```
 
 ## 🧪 Running Tests
@@ -101,7 +101,7 @@ To run the unit tests and ensure everything is working correctly:
    If you haven't already, navigate to the project's root directory:
 
    ```shell
-   cd stochastic_fex
+   cd gen_fex
    ```
 
 2. **Run Tests Using pytest**
@@ -116,7 +116,7 @@ Here's a simple example of how to use the `PPCA` and `PKPCA` classs:
 
 ```python
 import numpy as np
-from stochastic_fex import PPCA, PKPCA
+from gen_fex import PPCA, PKPCA
 
 # Generate some sample data
 data = np.random.rand(100, 1000)
@@ -149,7 +149,7 @@ If you find this work useful in your research, please consider citing:
 ```bibtex
 @article{Atwa2024,
   author    = {Atwa, Ahmed and Sedky, Ahmed},
-  title     = {Generative Modeling for High-Dimensional Sparse Data: Stochastic Feature Extraction in High-Risk Financial Regimes},
+  title     = {Generative Modeling for High-Dimensional Sparse Data: Probabilistic Feature Extraction in High-Risk Financial Regimes},
   journal   = {},
   year      = {},
   note      = {}
@@ -165,8 +165,8 @@ If you're planning to contribute to the project or modify the code, follow these
 1. **Clone the Repository**
 
    ```shell
-   git clone https://github.com/AI-Ahmed/stochastic_fex.git
-   cd stochastic_fex
+   git clone https://github.com/AI-Ahmed/gen_fex.git
+   cd gen_fex
    ```
 
 2. **Create a Virtual Environment**
@@ -251,6 +251,6 @@ To publish a new version of the package to PyPI:
 
 ## 🌐 Links
 
-- **Documentation**: [Github Package documentation](https://github.com/AI-Ahmed/stochastic_fex/README.md)
-- **Issue Tracker**: [GitHub Issues](https://github.com/AI-Ahmed/stochastic_fex/issues)
-- **Source Code**: [GitHub Repository](https://github.com/AI-Ahmed/stochastic_fex)
+- **Documentation**: [Github Package documentation](https://github.com/AI-Ahmed/gen_fex/README.md)
+- **Issue Tracker**: [GitHub Issues](https://github.com/AI-Ahmed/gen_fex/issues)
+- **Source Code**: [GitHub Repository](https://github.com/AI-Ahmed/gen_fex)
