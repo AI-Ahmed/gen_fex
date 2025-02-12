@@ -430,3 +430,57 @@ class PPCA(jittable.Jittable, BaseEstimator):
             self.sigma = 1.0 / (self.D - self.q) * np.sum(s[self.q:]**2)
         else:
             self.sigma = 0.0
+
+    def sample(self, 
+               n_samples: int = 1, 
+               seed: Optional[Union[IntLike, PRNGKey]] = None, 
+               add_noise: bool = True) -> Array:
+        """
+        Generate synthetic samples from the fitted PPCA model.
+
+        The method leverages the generative process defined by the PPCA model parameters.
+        Latent variables are sampled from a standard normal distribution and transformed
+        into the observed space using the learned loading matrix and mean. Optionally,
+        Gaussian noise is added to reflect the model's estimated variance.
+
+        Parameters
+        ----------
+        n_samples : int, optional
+            Number of synthetic samples to generate. Default is 1.
+        seed : Union[IntLike, PRNGKey], optional
+            PRNG key or integer seed for reproducibility. If None, uses the model's seed.
+        add_noise : bool, optional
+            Whether to include observation noise in the generated samples. Default is True.
+
+        Returns
+        -------
+        Array
+            Generated data matrix of shape (n_samples, D), where D is the number of features.
+
+        Notes
+        -----
+        The generative process follows:
+            1. Sample z ~ N(0, I_q) where q is the latent dimension.
+            2. Compute x_mean = W @ z.T + mu (project to observed space).
+            3. Add noise: x = x_mean + ε, where ε ~ N(0, sigma^2 I) if add_noise=True.
+        """
+        # Handle seed/PRNGKey
+        if seed is None:
+            seed = self.seed
+        rng = jax.random.PRNGKey(seed) if isinstance(seed, (int, np.integer)) else seed
+        rng_z, rng_eps = jax.random.split(rng)
+
+        # Sample latent variables z ~ N(0, I_q)
+        z = jax.random.normal(rng_z, shape=(n_samples, self.q))
+
+        # Project to observed space: x_mean = W @ z.T + mu
+        x_mean = jnp.dot(z, self.W.T) + self.mu.T  # Shape (n_samples, D)
+
+        # Add observation noise if specified
+        if add_noise:
+            noise = jax.random.normal(rng_eps, x_mean.shape) * self.sigma
+            samples = x_mean + noise
+        else:
+            samples = x_mean
+
+        return samples

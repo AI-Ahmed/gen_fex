@@ -145,3 +145,63 @@ class PKPCA(PPCA):
                                               self.mu, I_q, self.N, verbose),
                                      max_iter)
         return ell
+
+    def sample(self, 
+               n_samples: int = 1, 
+               seed: Optional[Union[IntLike, PRNGKey]] = None, 
+               add_noise: bool = True) -> Array:
+        """
+        Generate synthetic samples using the PKPCA model with Wishart-derived covariance.
+
+        Samples are drawn from a multivariate normal distribution parameterized by:
+        - Covariance matrix sampled from Wishart process using the RBF kernel
+        - Learned mean vector from training data
+        - Optional observation noise scaled by model's sigma parameter
+
+        Parameters
+        ----------
+        n_samples : int, optional
+            Number of synthetic samples to generate. Default is 1.
+        seed : Union[IntLike, PRNGKey], optional
+            PRNG key or integer seed. Uses model seed if None.
+        add_noise : bool, optional
+            Whether to add observation noise. Default is True.
+
+        Returns
+        -------
+        Array
+            Generated samples of shape (n_samples, D)
+
+        Notes
+        -----
+        1. Uses kernel matrix from training data to maintain temporal structure
+        2. Wishart sampling captures covariance uncertainty for risk-aware generation
+        3. Noise variance matches model's heteroskedastic uncertainty estimate
+        """
+        # Seed handling
+        if seed is None:
+            seed = self.seed
+        rng = jax.random.PRNGKey(seed) if isinstance(seed, (int, np.integer)) else seed
+        rng_wishart, rng_noise = jax.random.split(rng)
+
+        # 1. Compute RBF kernel matrix from training data
+        K = self.kernel_function(self.P, kernel='rbf', 
+                                gamma=1/(2*jnp.abs(self.sigma)))
+
+        # 2. Sample covariance from Wishart distribution
+        HKH = self.sample_wishart_covariance(rng_wishart, self.q, K)
+
+        # 3. Sample from multivariate normal with Wishart covariance
+        samples = jax.random.multivariate_normal(
+            rng_noise,
+            mean=jnp.squeeze(self.mu),  # Match covariance dimensions
+            cov=HKH + 1e-6*jnp.eye(HKH.shape[0]),  # Ensure PD
+            shape=(n_samples,)
+        )
+
+        # 4. Add heteroskedastic noise if enabled
+        if add_noise:
+            noise_scale = self.sigma * jnp.ones(samples.shape)
+            samples += jax.random.normal(rng_noise, samples.shape) * noise_scale
+
+        return samples
