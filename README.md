@@ -115,6 +115,20 @@ For high-dimensional data where the number of features $D$ is much larger than t
 
 PKPCA extends this by mapping data into a non-linear feature space using a kernel function (e.g., RBF). Our implementation utilizes a **Wishart Process** prior for the covariance matrix, allowing for robust uncertainty quantification in the kernel space.
 
+## 📊 Results & Performance
+
+We evaluate our models on high-dimensional sparse financial data. Below are comparisons of model performance and reconstruction quality.
+
+### Model Performance Comparison
+
+![Model Performance Comparison](docs/model_performance_comp.jpg)
+*Comparison of PPCA and PKPCA performance metrics.*
+
+### Reconstructed Data Comparison
+
+![Reconstructed Data Comparison](docs/reconstructed_data_comparsion.jpg)
+*Visual comparison of original vs. reconstructed data for PPCA and PKPCA.*
+
 ## 📁 Directory Structure
 
 ```text
