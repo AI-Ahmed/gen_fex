@@ -1,256 +1,169 @@
 # Probabilistic Feature Extraction in JAX
 
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
+[![JAX](https://img.shields.io/badge/backend-JAX-red.svg)](https://github.com/google/jax)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 ## Overview
 
-This repository accompanies our manuscript titled **"Generative Modeling for High-Dimensional Sparse Data: Probabilistic Feature Extraction in High-Risk Financial Regimes"**. The research focuses on leveraging probabilistic generative models—specifically Probabilistic PCA (PPCA) and Probabilistic Kernel PCA (PKPCA)—to reconstruct missing financial data and explore hidden, informative patterns. Our models offer robust handling of high-dimensional, sparse financial datasets and outperform conventional methods, especially in high-volatility regimes.
+**gen_fex** is a high-performance library for **Probabilistic Feature Extraction** and **Generative Modeling**, built on top of [JAX](https://github.com/google/jax). It is designed to handle high-dimensional, sparse time-series data, making it particularly effective for financial modeling in high-risk regimes.
 
-The research demonstrates the superiority of PKPCA over PPCA in capturing non-linear, time-dependent features, particularly during volatile financial regimes.
+This repository accompanies the manuscript **"Generative Modeling for High-Dimensional Sparse Data: Probabilistic Feature Extraction in High-Risk Financial Regimes"**. It implements robust probabilistic models that outperform conventional methods in capturing non-linear, time-dependent features, especially during volatile market conditions.
 
-1. Using information-driven bar techniques to synchronize and sample imbalanced sequence volumes.
-2. Applying a sampling event-based technique, the CUMSUM Filtering method, to create strategic trading plans based on volatility.
+## ✨ Key Features
 
-This repository implements probabilistic dimensionality reduction models, specifically **Probabilistic PCA (PPCA)** and **Probabilistic Kernel PCA (PKPCA)**, to address two key challenges:
+- **🚀 JAX-Accelerated**: Leverages JAX for high-performance numerical computing and automatic differentiation.
+- **scikit-learn Compatible**: Fully compatible with the `scikit-learn` API (`fit`, `transform`, `inverse_transform`), allowing seamless integration into existing ML pipelines.
+- **High-Dimensional Efficiency**: Automatically handles the "Transpose Trick" (Dual formulation) to efficiently process datasets where features ($D$) far exceed samples ($N$).
+- **Missing Data Imputation**: Robust reconstruction of missing values in sparse datasets.
+- **Advanced Models**:
+  - **PPCA (Probabilistic PCA)**: A probabilistic framework for PCA that handles noise and missing data.
+  - **PKPCA (Probabilistic Kernel PCA)**: Extends PPCA with kernel methods (e.g., RBF) and Wishart processes to capture non-linear structures.
 
-- Reconstructing missing values in high-dimensional time-series data.
-- Extracting latent features in a sparse, information-driven bars dataset, which is a specialized form of financial sampling.
-
-The implementation is fully **compatible with scikit-learn**, making it easy to integrate into existing machine-learning workflows.
-
-## Key Contributions
-
-- Implementation of **PPCA** and **PKPCA** models for dimensionality reduction and missing data imputation.
-- Application of **information-driven bars** and **CUMSUM filtering** to expand asset vectors to a high-dimensional sparse multivariate setting.
-- Comparison of model performance using **MSE**, **MAE**, and other metrics across different market regimes.
-- Experimental validation using **risk metrics** such as **Conditional Value at Risk (CVaR)** and **Conditional Drawdown at Risk (CDaR)**.
-- Seamless integration with the **scikit-learn** API for easy use in machine learning pipelines.
-
-## 📁 Directory Structure
-
-```bash
-.
-├── LICENSE
-├── README.md
-├── pyproject.toml
-├── gen_fex
-│   ├── __init__.py
-│   ├── _ppcax.py
-│   ├── _pkpcax.py
-└── tests
-    ├── __init__.py
-    ├── gen_data.py
-    └── test.py
-```
-
-## 🛠️ Installation and Setup Instructions
+## 🛠️ Installation
 
 ### Prerequisites
 
-- **Python**: Ensure you have Python **3.10** or newer installed on your system.
+- Python **3.10** or newer.
 
-### Installation Steps
+### Install via pip
 
-1. **Clone the Repository**
+You can install the package directly from GitHub:
 
-   ```shell
+```bash
+pip install git+https://github.com/AI-Ahmed/gen_fex.git
+```
+
+### Development Installation
+
+If you want to contribute or modify the code:
+
+1. **Clone the repository:**
+
+   ```bash
    git clone https://github.com/AI-Ahmed/gen_fex.git
    cd gen_fex
    ```
 
-2. **Install Flit**
+2. **Install using Flit:**
 
-   If you don't already have Flit installed, install it using `pip`:
-
-   ```shell
+   ```bash
    pip install flit
+   flit install --deps develop --extras test --symlink
    ```
 
-3. **Install the Package and Dependencies**
+## 🚀 Quick Start
 
-   Install the package along with its dependencies using Flit:
-
-   ```shell
-   flit install --deps develop
-   ```
-
-   This command installs the `gen_fex` package along with all required dependencies, including development and testing tools like `pytest` and `flake8`.
-
-### Alternative: Install Directly from GitHub
-
-If you prefer to install the package directly from GitHub without cloning the repository:
-
-```shell
-pip install git+https://github.com/AI-Ahmed/gen_fex
-```
-
-This command installs the latest version of `gen_fex` from the main branch.
-
-### Importing the Package
-
-After installation, you can import the PPCA model in your Python code:
-
-```python
-from gen_fex import PPCA, PKPCA
-```
-
-## 🧪 Running Tests
-
-To run the unit tests and ensure everything is working correctly:
-
-1. **Navigate to the Project Directory**
-
-   If you haven't already, navigate to the project's root directory:
-
-   ```shell
-   cd gen_fex
-   ```
-
-2. **Run Tests Using pytest**
-
-   ```shell
-   pytest tests/test.py
-   ```
-
-## 📚 Usage Example
-
-Here's a simple example of how to use the `PPCA` and `PKPCA` classs:
+Here is a simple example of how to use the `PPCA` and `PKPCA` classes.
 
 ```python
 import numpy as np
 from gen_fex import PPCA, PKPCA
 
-# Generate some sample data
-data = np.random.rand(100, 1000)
+# 1. Generate synthetic high-dimensional data (Samples < Features)
+# Shape: (N_samples, D_features)
+N, D = 100, 1000
+data = np.random.rand(N, D)
 
-# Create a PPCA, PKPCA models instances
-ppca_model = PPCA(q=150)
-pkpca_model = PKPCA(q=150)
+# 2. Initialize Models
+# We choose a latent dimension q
+q = 50
+ppca = PPCA(q=q)
+pkpca = PKPCA(q=q)
 
-# Fit the model to the data
-ppca_model.fit(data, use_em=True)
-pkpca_model.fit(data, use_em=True)
+# 3. Fit Models
+# The models automatically handle the high-dimensional nature (N < D)
+print("Fitting PPCA...")
+ppca.fit(data, use_em=True, verbose=1)
 
-# Transform the data to the lower-dimensional space
-transformed_data_ppca = ppca_model.transform()
-transformed_data_pkpca = pkpca_model.transform()
+print("Fitting PKPCA...")
+pkpca.fit(data, use_em=True, verbose=1)
 
-print("PPCA Transformed Data Shape:", transformed_data_ppca.shape)
-print("PKPCA Transformed Data Shape:", transformed_data_pkpca.shape)
+# 4. Transform (Dimensionality Reduction)
+latent_ppca = ppca.transform()
+latent_pkpca = pkpca.transform()
 
+print(f"Original Shape: {data.shape}")
+print(f"PPCA Latent Shape: {latent_ppca.shape}")   # (q, D) - Latent features
+print(f"PKPCA Latent Shape: {latent_pkpca.shape}") # (q, D) - Latent features
+
+# Note: The model decomposes X approx W @ Z
+# W: (N, q) - Sample embeddings
+# Z: (q, D) - Latent features (returned by transform)
+
+# 5. Reconstruction (Inverse Transform)
+recon_ppca = ppca.inverse_transform(latent_ppca)
+print(f"Reconstructed Shape: {recon_ppca.shape}")
 ```
 
-## 📄 License
+## 🧮 Mathematical Background
 
-This project is licensed under the [Apache License 2.0](LICENSE), which is a permissive open-source license that grants users extensive rights to use, modify, and distribute the software. See the [LICENSE](LICENSE) file for more details.
+### Probabilistic PCA (PPCA)
 
-## 📣 Cite Our Work
+PPCA defines a generative model where the observed data $\mathbf{x}$ is generated from a latent variable $\mathbf{z}$ via a linear transformation with Gaussian noise:
 
-If you find this work useful in your research, please consider citing:
+$$ \mathbf{x} = \mathbf{W}\mathbf{z} + \boldsymbol{\mu} + \boldsymbol{\epsilon} $$
 
-```bibtex
-@article{Atwa2024,
-  author    = {Atwa, Ahmed and Sedky, Ahmed},
-  title     = {Generative Modeling for High-Dimensional Sparse Data: Probabilistic Feature Extraction in High-Risk Financial Regimes},
-  journal   = {},
-  year      = {},
-  note      = {}
-}
+where $\mathbf{z} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ and $\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \sigma^2\mathbf{I})$.
+
+### Dual Formulation & The Transpose Trick
+
+For high-dimensional data where the number of features $D$ is much larger than the number of samples $N$ ($D \gg N$), standard PCA is computationally expensive ($O(D^3)$). **gen_fex** implements the **Dual PPCA** formulation (often called the "Transpose Trick"), which operates on the $N \times N$ Gram matrix instead of the $D \times D$ covariance matrix, significantly reducing computational cost to $O(N^3)$.
+
+### Probabilistic Kernel PCA (PKPCA)
+
+PKPCA extends this by mapping data into a non-linear feature space using a kernel function (e.g., RBF). Our implementation utilizes a **Wishart Process** prior for the covariance matrix, allowing for robust uncertainty quantification in the kernel space.
+
+## 📁 Directory Structure
+
+```text
+.
+├── gen_fex/            # Source code
+│   ├── _ppcax.py       # PPCA implementation
+│   └── _pkpcax.py      # PKPCA implementation
+├── tests/              # Unit tests
+├── pyproject.toml      # Project configuration
+└── README.md           # Documentation
 ```
 
----
+## 🧪 Running Tests
 
-## 🔧 Development Setup
+To ensure everything is working correctly, run the test suite:
 
-If you're planning to contribute to the project or modify the code, follow these steps to set up your development environment:
-
-1. **Clone the Repository**
-
-   ```shell
-   git clone https://github.com/AI-Ahmed/gen_fex.git
-   cd gen_fex
-   ```
-
-2. **Create a Virtual Environment**
-
-   It's recommended to use a virtual environment to manage dependencies:
-
-   ```shell
-   python -m venv venv
-   source venv/bin/activate  # On Windows use: venv\Scripts\activate
-   ```
-
-3. **Install Flit**
-
-   ```shell
-   pip install flit
-   ```
-
-4. **Install the Package in Editable Mode**
-
-   - For development and testing, install the package with the `test` extras:
-
-   ```shell
-   flit install --deps develop --extras test --symlink
-   ```
-
-   The `--symlink` option installs the package in editable mode, so changes to the code are immediately reflected without reinstallation.
-
-5. **Install Pre-commit Hooks (Optional)**
-
-   If you use `pre-commit` for code formatting and linting:
-
-   ```shell
-   pip install pre-commit
-   pre-commit install
-   ```
-
-6. **Run Tests**
-
-   ```shell
-   pytest tests/test.py
-   ```
+```bash
+pytest tests/test.py
+```
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
----
+1. Fork the repository.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
-## 📬 Contact
+## 📄 License
 
-For any questions or inquiries, please contact [Ahmed Nabil Atwa](mailto:dr.ahmedna.ai@gmail.com).
+This project is licensed under the [Apache License 2.0](LICENSE).
 
----
+## 📣 Citation
 
-## 📝 Changelog
+If you use this software in your research, please cite our manuscript:
 
-Refer to the [CHANGELOG](CHANGELOG.md) for details on updates and changes to the project.
-
----
-
-## 📦 Publishing to PyPI (Maintainers Only)
-
-To publish a new version of the package to PyPI:
-
-1. **Update the Version Number**
-
-   Increment the version number in `pyproject.toml`.
-
-2. **Build the Package**
-
-   ```shell
-   flit build
-   ```
-
-3. **Publish to PyPI**
-
-   ```shell
-   flit publish
-   ```
-
----
-
-## 🌐 Links
-
-- **Documentation**: [Github Package documentation](https://github.com/AI-Ahmed/gen_fex/README.md)
-- **Issue Tracker**: [GitHub Issues](https://github.com/AI-Ahmed/gen_fex/issues)
-- **Source Code**: [GitHub Repository](https://github.com/AI-Ahmed/gen_fex)
+```bibtex
+@article{ATWA2026113376,
+title = {Generative modeling for high-dimensional sparse data: Probabilistic feature extraction in high-risk financial regimes},
+journal = {Engineering Applications of Artificial Intelligence},
+volume = {164},
+pages = {113376},
+year = {2026},
+issn = {0952-1976},
+doi = {https://doi.org/10.1016/j.engappai.2025.113376},
+url = {https://www.sciencedirect.com/science/article/pii/S0952197625034074},
+author = {Ahmed Nabil Atwa and Mohamed Kholief and Ahmed Sedky},
+keywords = {Probabilistic principal component analysis, Probabilistic kernel principal component analysis, Wishart process, Missing value imputation, Information-driven bars, Hierarchical risk parity}
+}
+```
