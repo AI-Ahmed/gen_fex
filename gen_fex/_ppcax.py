@@ -147,6 +147,9 @@ class PPCA(jittable.Jittable, BaseEstimator):
         """
         P = data if isinstance(data, jnp.ndarray) else jnp.asarray(data)
         self.N, self.D = P.shape
+        # Data shape is automatically detected given the dimensions of the input data
+        ## If N > D, we use the primal form
+        ## If N <= D, we use the dual form
         sample_shape = (self.N, self.q)
         return P, sample_shape
 
@@ -400,9 +403,11 @@ class PPCA(jittable.Jittable, BaseEstimator):
 
         # Sample Covariance Matrix
         if self.N < self.D:
-            S = self.N**-1 * p_cent @ p_cent.T  # N x N
+            # Transpose Trick (Input D x N): S is D x D. Divide by Samples (N = self.D).
+            S = self.N**-1 * p_cent @ p_cent.T
         else:
-            S = self.D**-1 * p_cent @ p_cent.T  # N x N
+            # Conventional PPCA (Input N x D): S is N x N. Divide by Features (D = self.D) per manuscript.
+            S = self.D**-1 * p_cent @ p_cent.T
 
         (self.W, self.sigma,
          *params), ell = jax.lax.scan(m_step, (self.W, self.sigma, S,
@@ -478,7 +483,7 @@ class PPCA(jittable.Jittable, BaseEstimator):
 
         # Add observation noise if specified
         if add_noise:
-            noise = jax.random.normal(rng_eps, x_mean.shape) * self.sigma
+            noise = jax.random.normal(rng_eps, x_mean.shape) * jnp.sqrt(self.sigma)
             samples = x_mean + noise
         else:
             samples = x_mean

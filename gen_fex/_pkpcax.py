@@ -99,7 +99,7 @@ class PKPCA(PPCA):
         L_tri = jnp.linalg.cholesky(k_fn)
 
         # Use Sigma for multivariate normal sampling
-        dist = distrax.MultivariateNormalTri(loc=jnp.zeros(n), scale_tri=jnp.cov(L_tri))
+        dist = distrax.MultivariateNormalTri(loc=jnp.zeros(n), scale_tri=L_tri)
         samples = dist.sample(seed=subkey, sample_shape=(df,))
 
         # Construct the sampled kernel matrix
