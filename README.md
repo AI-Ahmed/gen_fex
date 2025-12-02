@@ -101,15 +101,35 @@ print(f"Reconstructed Shape: {recon_ppca.shape}")
 
 ### Probabilistic PCA (PPCA)
 
-PPCA defines a generative model where the observed data $\mathbf{x}$ is generated from a latent variable $\mathbf{z}$ via a linear transformation with Gaussian noise:
+PPCA in the matrix-variate setting models the observed data matrix $P ∈ ℝ^{N×D}$ using
+latent variables $Z ∈ ℝ^{q×N}$ with a linear Gaussian generative structure:
 
-$$ \mathbf{x} = \mathbf{W}\mathbf{z} + \boldsymbol{\mu} + \boldsymbol{\epsilon} $$
+$$
+P = WZ + \mu + E
+$$
 
-where $\mathbf{z} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ and $\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \sigma^2\mathbf{I})$.
+where:
+
+- \$W \in \mathbb{R}^{N \times q}\$ is the loading matrix,
+- \$\mu \in \mathbb{R}^{N \times D}\$ is the mean matrix,
+- \$E \in \mathbb{R}^{N \times D}\$ is the noise matrix.
+
+The latent variables follow an isotropic Gaussian:
+
+$$
+Z \sim \mathcal{N}(0, I_q)
+$$
+
+and the noise is modeled using a matrix-variate Gaussian distribution:
+
+$$
+E \sim \mathcal{N}_{N \times D}
+( 0,\ \sigma^2 I_N,\ I_D ).
+$$
 
 ### Dual Formulation & The Transpose Trick
 
-For high-dimensional data where the number of features $D$ is much larger than the number of samples $N$ ($D \gg N$), standard PCA is computationally expensive ($O(D^3)$). **gen_fex** implements the **Dual PPCA** formulation (often called the "Transpose Trick"), which operates on the $N \times N$ Gram matrix instead of the $D \times D$ covariance matrix, significantly reducing computational cost to $O(N^3)$.
+For high-dimensional data where the number of features $D$ is much larger than the number of samples $N$ (\$D \gg N\$), standard PCA is computationally expensive ( \$O(D^3)\$ ). **gen_fex** implements the **Dual PPCA** formulation (often called the "Transpose Trick"), which operates on the N×N Gram matrix instead of the D×D covariance matrix, significantly reducing computational cost to \$O(N^3)\$.
 
 ### Probabilistic Kernel PCA (PKPCA)
 
@@ -122,12 +142,12 @@ We evaluate our models on high-dimensional sparse financial data. Below are comp
 ### Model Performance Comparison
 
 ![Model Performance Comparison](docs/model_performance_comp.jpg)
-*Comparison of PPCA and PKPCA performance metrics.*
+*Fig. 2. Comparison of the negative log-likelihood (`ℓ`) between high-dimensional PPCA and PKPCA over 20 iterations (T4 GPU).*
 
 ### Reconstructed Data Comparison
 
 ![Reconstructed Data Comparison](docs/reconstructed_data_comparsion.jpg)
-*Visual comparison of original vs. reconstructed data for PPCA and PKPCA.*
+*Fig. 8. Monthly reconstructed correlation between PPCA and PKPCA for assets in the R2 regime. PKPCA shows a clear divergence from PPCA, particularly between the IT and Materials sectors, reflecting sector-specific performance during this period.*
 
 ## 📁 Directory Structure
 
